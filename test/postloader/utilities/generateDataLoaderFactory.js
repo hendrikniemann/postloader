@@ -32,37 +32,32 @@ test('creates a loader for unique indexes', (t) => {
   ));
 
   const expected = trim(`
-// @flow
-
 import {
   getByIds,
   getByIdsUsingJoiningTable
 } from 'postloader';
-import DataLoader from 'dataloader';
-import type {
-  DatabaseConnectionType
-} from 'slonik';
+import * as DataLoader from 'dataloader';
+import { DatabaseConnectionType } from 'slonik';
 
-type FooRecordType = {|
-  +bar: string
-|};
+export type FooRecordType = Readonly<{
+  bar: string
+}>;
 
-export type {
-  FooRecordType
-};
+export type LoadersType = Readonly<{
+  FooByBarLoader: DataLoader<string, FooRecordType>
+}>;
 
-export type LoadersType = {|
-  +FooByBarLoader: DataLoader<string, FooRecordType>
-|};
-
-export const createLoaders = (connection: DatabaseConnectionType, dataLoaderConfigurationMap: Object = {}): LoadersType => {
+export const createLoaders = (
+  connection: DatabaseConnectionType,
+  dataLoaderConfigurationMap: { [key: string]: DataLoader.Options<any, any> } = {}
+): LoadersType => {
   const FooByBarLoader = new DataLoader((ids) => {
     return getByIds(connection, 'foo', ids, 'bar', '"bar"', false);
   }, dataLoaderConfigurationMap.FooByBarLoader);
 
   return {
     FooByBarLoader
-  };
+  } as LoadersType;
 };`);
 
   // eslint-disable-next-line ava/prefer-power-assert
@@ -96,37 +91,32 @@ test('creates a loader for unique indexes (uses mappedTableName when available)'
   ));
 
   const expected = trim(`
-// @flow
-
 import {
   getByIds,
   getByIdsUsingJoiningTable
 } from 'postloader';
-import DataLoader from 'dataloader';
-import type {
-  DatabaseConnectionType
-} from 'slonik';
+import * as DataLoader from 'dataloader';
+import { DatabaseConnectionType } from 'slonik';
 
-type BazRecordType = {|
-  +bar: string
-|};
+export type BazRecordType = Readonly<{
+  bar: string
+}>;
 
-export type {
-  BazRecordType
-};
+export type LoadersType = Readonly<{
+  BazByBarLoader: DataLoader<string, BazRecordType>
+}>;
 
-export type LoadersType = {|
-  +BazByBarLoader: DataLoader<string, BazRecordType>
-|};
-
-export const createLoaders = (connection: DatabaseConnectionType, dataLoaderConfigurationMap: Object = {}): LoadersType => {
+export const createLoaders = (
+  connection: DatabaseConnectionType,
+  dataLoaderConfigurationMap: { [key: string]: DataLoader.Options<any, any> } = {}
+): LoadersType => {
   const BazByBarLoader = new DataLoader((ids) => {
     return getByIds(connection, 'foo', ids, 'bar', '"bar"', false);
   }, dataLoaderConfigurationMap.BazByBarLoader);
 
   return {
     BazByBarLoader
-  };
+  } as LoadersType;
 };`);
 
   // eslint-disable-next-line ava/prefer-power-assert
@@ -151,37 +141,32 @@ test('creates a loader for _id columns', (t) => {
   ));
 
   const expected = trim(`
-// @flow
-
 import {
   getByIds,
   getByIdsUsingJoiningTable
 } from 'postloader';
-import DataLoader from 'dataloader';
-import type {
-  DatabaseConnectionType
-} from 'slonik';
+import * as DataLoader from 'dataloader';
+import { DatabaseConnectionType } from 'slonik';
 
-type BazRecordType = {|
-  +barId: string
-|};
+export type BazRecordType = Readonly<{
+  barId: string
+}>;
 
-export type {
-  BazRecordType
-};
+export type LoadersType = Readonly<{
+  BazsByBarIdLoader: DataLoader<string, ReadonlyArray<BazRecordType>>
+}>;
 
-export type LoadersType = {|
-  +BazsByBarIdLoader: DataLoader<string, $ReadOnlyArray<BazRecordType>>
-|};
-
-export const createLoaders = (connection: DatabaseConnectionType, dataLoaderConfigurationMap: Object = {}): LoadersType => {
+export const createLoaders = (
+  connection: DatabaseConnectionType,
+  dataLoaderConfigurationMap: { [key: string]: DataLoader.Options<any, any> } = {}
+): LoadersType => {
   const BazsByBarIdLoader = new DataLoader((ids) => {
     return getByIds(connection, 'foo', ids, 'bar_id', '"bar_id" "barId"', true);
   }, dataLoaderConfigurationMap.BazsByBarIdLoader);
 
   return {
     BazsByBarIdLoader
-  };
+  } as LoadersType;
 };`);
 
   // eslint-disable-next-line ava/prefer-power-assert
@@ -233,44 +218,37 @@ test('creates a loader for a join table', (t) => {
   ));
 
   const expected = trim(`
-// @flow
-
 import {
   getByIds,
   getByIdsUsingJoiningTable
 } from 'postloader';
-import DataLoader from 'dataloader';
-import type {
-  DatabaseConnectionType
-} from 'slonik';
+import * as DataLoader from 'dataloader';
+import { DatabaseConnectionType } from 'slonik';
 
-type BarRecordType = {|
-  +id: string
-|};
+export type BarRecordType = Readonly<{
+  id: string
+}>;
 
-type FooRecordType = {|
-  +id: string
-|};
+export type FooRecordType = Readonly<{
+  id: string
+}>;
 
-type BarFooRecordType = {|
-  +barId: string,
-  +fooId: string
-|};
+export type BarFooRecordType = Readonly<{
+  barId: string,
+  fooId: string
+}>;
 
-export type {
-  BarFooRecordType,
-  BarRecordType,
-  FooRecordType
-};
+export type LoadersType = Readonly<{
+  BarFoosByBarIdLoader: DataLoader<string, ReadonlyArray<BarFooRecordType>>,
+  BarFoosByFooIdLoader: DataLoader<string, ReadonlyArray<BarFooRecordType>>,
+  BarsByFooIdLoader: DataLoader<string, ReadonlyArray<BarRecordType>>,
+  FoosByBarIdLoader: DataLoader<string, ReadonlyArray<FooRecordType>>
+}>;
 
-export type LoadersType = {|
-  +BarFoosByBarIdLoader: DataLoader<string, $ReadOnlyArray<BarFooRecordType>>,
-  +BarFoosByFooIdLoader: DataLoader<string, $ReadOnlyArray<BarFooRecordType>>,
-  +BarsByFooIdLoader: DataLoader<string, $ReadOnlyArray<BarRecordType>>,
-  +FoosByBarIdLoader: DataLoader<string, $ReadOnlyArray<FooRecordType>>
-|};
-
-export const createLoaders = (connection: DatabaseConnectionType, dataLoaderConfigurationMap: Object = {}): LoadersType => {
+export const createLoaders = (
+  connection: DatabaseConnectionType,
+  dataLoaderConfigurationMap: { [key: string]: DataLoader.Options<any, any> } = {}
+): LoadersType => {
   const BarFoosByBarIdLoader = new DataLoader((ids) => {
     return getByIds(connection, 'bar_foo', ids, 'bar_id', '"bar_id" "barId", "foo_id" "fooId"', true);
   }, dataLoaderConfigurationMap.BarFoosByBarIdLoader);
@@ -289,7 +267,7 @@ export const createLoaders = (connection: DatabaseConnectionType, dataLoaderConf
     BarFoosByFooIdLoader,
     BarsByFooIdLoader,
     FoosByBarIdLoader
-  };
+  } as LoadersType;
 };`);
 
   // eslint-disable-next-line ava/prefer-power-assert

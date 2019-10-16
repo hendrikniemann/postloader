@@ -18,13 +18,10 @@ test('create flow type document with one type', (t) => {
   ]));
 
   const expected = trim(`
-type BarRecordType = {|
-  +foo: any
-|};
-
-export type {
-  BarRecordType
-};`);
+export type BarRecordType = Readonly<{
+  foo: any
+}>;
+`);
 
   t.true(actual === expected);
 });
@@ -42,18 +39,13 @@ test('create flow type document with multiple types', (t) => {
   ]));
 
   const expected = trim(`
-type QuxRecordType = {|
-  +baz: any
-|};
+export type QuxRecordType = Readonly<{
+  baz: any
+}>;
 
-type BarRecordType = {|
-  +foo: any
-|};
-
-export type {
-  BarRecordType,
-  QuxRecordType
-};`);
+export type BarRecordType = Readonly<{
+  foo: any
+}>;`);
 
   t.true(actual === expected);
 });

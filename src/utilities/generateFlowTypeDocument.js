@@ -19,7 +19,7 @@ const generateFlowTypeDeclarationBody = (columns: $ReadOnlyArray<ColumnType>, da
   for (const column of sortedColumns) {
     const propertyDataType = dataTypeMap[column.dataType] ? getFlowType(dataTypeMap[column.dataType]) : getFlowType(column.dataType);
 
-    propertyDeclarations.push('+' + formatPropertyName(column.name) + ': ' + propertyDataType + (column.isNullable ? ' | null' : ''));
+    propertyDeclarations.push(formatPropertyName(column.name) + ': ' + propertyDataType + (column.isNullable ? ' | null' : ''));
   }
 
   return propertyDeclarations.join('\n');
@@ -52,21 +52,12 @@ export default (unnormalisedColumns: $ReadOnlyArray<ColumnType>, dataTypeMap: Da
     const typeName = formatTypeName(tableName);
 
     const typeDeclaration = `
-type ${typeName} = {|
+export type ${typeName} = Readonly<{
   ${generateFlowTypeDeclarationBody(tableColumns, dataTypeMap).split('\n').sort().join(',\n  ')}
-|};`;
+}>;`;
 
     typeDeclarations.push(typeDeclaration);
   }
 
-  const exportedTypes = tableNames.map((tableName) => {
-    return formatTypeName(tableName);
-  })
-    .sort()
-    .join(',\n  ');
-
-  return typeDeclarations.join('\n') + `\n
-export type {
-  ${exportedTypes}
-};`;
+  return typeDeclarations.join('\n');
 };

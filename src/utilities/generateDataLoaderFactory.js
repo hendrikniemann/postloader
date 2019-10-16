@@ -240,25 +240,24 @@ export default (
     return a.localeCompare(b);
   });
 
-  return `// @flow
-
-import {
+  return `import {
   getByIds,
   getByIdsUsingJoiningTable
 } from 'postloader';
-import DataLoader from 'dataloader';
-import type {
-  DatabaseConnectionType
-} from 'slonik';
+import * as DataLoader from 'dataloader';
+import { DatabaseConnectionType } from 'slonik';
 ${generateFlowTypeDocument(columns, dataTypeMap)}
 
-export type LoadersType = {|
+export type LoadersType = Readonly<{
 ${loaderTypes.map((body) => {
     return indent(body, 2);
   }).sort().join(',\n')}
-|};
+}>;
 
-export const createLoaders = (connection: DatabaseConnectionType, dataLoaderConfigurationMap: Object = {}): LoadersType => {
+export const createLoaders = (
+  connection: DatabaseConnectionType,
+  dataLoaderConfigurationMap: { [key: string]: DataLoader.Options<any, any> } = {}
+): LoadersType => {
 ${loaders
     .map((body) => {
       return indent(body, 2);
@@ -271,6 +270,6 @@ ${loaderNames
       return indent(body, 4);
     })
     .join(',\n')}
-  };
+  } as LoadersType;
 };`;
 };
