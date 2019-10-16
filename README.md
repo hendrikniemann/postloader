@@ -7,7 +7,7 @@
 [![Canonical Code Style](https://img.shields.io/badge/code%20style-canonical-blue.svg?style=flat-square)](https://github.com/gajus/canonical)
 [![Twitter Follow](https://img.shields.io/twitter/follow/kuizinas.svg?style=social&label=Follow)](https://twitter.com/kuizinas)
 
-A scaffolding tool for projects using [DataLoader](https://github.com/facebook/dataloader), [Flow](https://flow.org/) and [PostgreSQL](https://www.postgresql.org/).
+A [TypeScript](https://www.typescriptlang.org/) fork of [gajus/postloader](https://github.com/gajus/postloader) for generation of [DataLoader](https://github.com/facebook/dataloader)s and TypeScript typings from [PostgreSQL](https://www.postgresql.org/) schemas.
 
 * [Motivation](#motivation)
   * [What makes this different from using an ORM?](#what-makes-this-different-from-using-an-orm)
@@ -121,13 +121,11 @@ Table name is camel cased, the first letter is uppercased, suffixed with "By" co
 ### Generate DataLoader loaders for all database tables
 
 ```bash
-export POSTLOADER_DATABASE_CONNECTION_URI=postgres://postgres:password@127.0.0.1/test
-export POSTLOADER_COLUMN_FILTER="return /* exclude tables that have a _view */ !columns.map(column => column.tableName).includes(tableName + '_view')"
-export POSTLOADER_TABLE_NAME_MAPPER="return tableName.endsWith('_view') ? tableName.slice(0, -5) : tableName;"
-export POSTLOADER_DATA_TYPE_MAP="{\"email\":\"text\"}"
-
-postloader generate-loaders > ./PostLoader.js
-
+postloader generate-loaders \
+  --database-connection-uri "postgres://postgres:password@127.0.0.1/test" > ./PostLoader.js
+  --column-filter "return /* exclude tables that have a _view */ !columns.map(column => column.tableName).includes(tableName + '_view')" \
+  --table-name-mapper "return tableName.endsWith('_view') ? tableName.slice(0, -5) : tableName;" \
+  --data-type-map "{\"email\":\"text\"}"
 ```
 
 This generates a file containing a factory function used to construct a DataLoader for every table in the database and Flow type declarations in the following format:
@@ -139,33 +137,31 @@ import {
   getByIds,
   getByIdsUsingJoiningTable
 } from 'postloader';
-import DataLoader from 'dataloader';
-import type {
-  DatabaseConnectionType
-} from 'slonik';
+import * as DataLoader from 'dataloader';
+import { DatabaseConnectionType } from 'slonik';
 
-export type UserRecordType = {|
-  +id: number,
-  +email: string,
-  +givenName: string | null,
-  +familyName: string | null,
-  +password: string,
-  +createdAt: string,
-  +updatedAt: string | null,
-  +pseudonym: string
-|};
+export type UserRecordType = Readonly<{
+  id: number,
+  email: string,
+  givenName: string | null,
+  familyName: string | null,
+  password: string,
+  createdAt: string,
+  updatedAt: string | null,
+  pseudonym: string
+}>;
 
 // [..]
 
 export type LoadersType = {|
-  +UserByIdLoader: DataLoader<number, UserRecordType>,
-  +UsersByAffiliateIdLoader: DataLoader<number, $ReadOnlyArray<UserRecordType>>,
+  UserByIdLoader: DataLoader<number, UserRecordType>,
+  UsersByAffiliateIdLoader: DataLoader<number, $ReadOnlyArray<UserRecordType>>,
   // [..]
 |};
 
 // [..]
 
-export const createLoaders = (connection: DatabaseConnectionType) => {
+export const createLoaders = (connection: DatabaseConnectionType/*, [...] */) => {
   const UserByIdLoader = new DataLoader((ids) => {
     return getByIds(connection, 'user', ids, 'id', '"id", "email", "given_name" "givenName", "family_name" "familyName", "password", "created_at" "createdAt", "updated_at" "updatedAt", "pseudonym"', false);
   });
@@ -181,8 +177,6 @@ export const createLoaders = (connection: DatabaseConnectionType) => {
     // [..]
   };
 };
-
-
 ```
 
 Notice that the generated file depends on `postloader` package, i.e. you must install `postloader` as the main project dependency (as opposed to a development dependency).
@@ -198,8 +192,6 @@ Notice that the generated file depends on `postloader` package, i.e. you must in
 Example:
 
 ```js
-// @flow
-
 import {
   createPool
 } from 'slonik';
