@@ -28,7 +28,7 @@ export default (loaderName: string, dataTypeName: string, resourceName: string, 
   }
 
   if (resultIsArray) {
-    return loaderName + ': DataLoader<' + keyType + ', ReadonlyArray<' + formatTypeName(resourceName) + '>>';
+    return loaderName + ': DataLoader<' + keyType + ', Array<' + formatTypeName(resourceName) + '>>';
   } else {
     return loaderName + ': DataLoader<' + keyType + ', ' + formatTypeName(resourceName) + '>';
   }

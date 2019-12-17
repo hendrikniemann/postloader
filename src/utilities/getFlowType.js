@@ -10,11 +10,15 @@ const log = Logger.child({
 
 export default (databaseTypeName: string): string => {
   if (databaseTypeName === 'json') {
-    return 'Object';
+    return 'any';
   }
 
   if (databaseTypeName === 'boolean') {
     return 'boolean';
+  }
+
+  if (databaseTypeName === 'timestamp without time zone') {
+    return 'number';
   }
 
   if (isStringType(databaseTypeName)) {
@@ -26,7 +30,7 @@ export default (databaseTypeName: string): string => {
   }
 
   if (databaseTypeName === 'json' || databaseTypeName === 'jsonb') {
-    return 'Object';
+    return 'any';
   }
 
   log.warn({

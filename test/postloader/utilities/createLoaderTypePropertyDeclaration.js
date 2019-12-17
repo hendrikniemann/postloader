@@ -9,8 +9,8 @@ test('generates loader type property declaration', (t) => {
 });
 
 test('generates loader type property declaration (array)', (t) => {
-  t.true(createLoaderTypePropertyDeclaration('FooLoader', 'text', 'foo', true) === 'FooLoader: DataLoader<string, ReadonlyArray<FooRecordType>>');
-  t.true(createLoaderTypePropertyDeclaration('FooLoader', 'integer', 'foo', true) === 'FooLoader: DataLoader<number, ReadonlyArray<FooRecordType>>');
+  t.true(createLoaderTypePropertyDeclaration('FooLoader', 'text', 'foo', true) === 'FooLoader: DataLoader<string, Array<FooRecordType>>');
+  t.true(createLoaderTypePropertyDeclaration('FooLoader', 'integer', 'foo', true) === 'FooLoader: DataLoader<number, Array<FooRecordType>>');
 });
 
 test('throws an error if data type cannot resolve to a string or number', (t) => {

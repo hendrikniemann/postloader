@@ -153,7 +153,7 @@ export type BazRecordType = Readonly<{
 }>;
 
 export type LoadersType = Readonly<{
-  BazsByBarIdLoader: DataLoader<string, ReadonlyArray<BazRecordType>>
+  BazsByBarIdLoader: DataLoader<string, Array<BazRecordType>>
 }>;
 
 export const createLoaders = (
@@ -239,10 +239,10 @@ export type BarFooRecordType = Readonly<{
 }>;
 
 export type LoadersType = Readonly<{
-  BarFoosByBarIdLoader: DataLoader<string, ReadonlyArray<BarFooRecordType>>,
-  BarFoosByFooIdLoader: DataLoader<string, ReadonlyArray<BarFooRecordType>>,
-  BarsByFooIdLoader: DataLoader<string, ReadonlyArray<BarRecordType>>,
-  FoosByBarIdLoader: DataLoader<string, ReadonlyArray<FooRecordType>>
+  BarFoosByBarIdLoader: DataLoader<string, Array<BarFooRecordType>>,
+  BarFoosByFooIdLoader: DataLoader<string, Array<BarFooRecordType>>,
+  BarsByFooIdLoader: DataLoader<string, Array<BarRecordType>>,
+  FoosByBarIdLoader: DataLoader<string, Array<FooRecordType>>
 }>;
 
 export const createLoaders = (
